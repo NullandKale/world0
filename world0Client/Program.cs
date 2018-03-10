@@ -2,73 +2,37 @@
 using System.IO;
 using System.Net.Sockets;
 using System.Net;
+using world0Client.server;
 
 namespace world0Client
 {
     public class Program
     {
+        const string version = "world0Client Alpha v 0.0.1";
         static void Main(string[] args)
         {
+            bool staticIP = true;
             while(true)
             {
+                Console.WriteLine(version);
                 Console.Write("Enter Server IP: ");
-                IPAddress addr = IPAddress.Parse("192.168.1.126");
-                try
+                string ip = "192.168.1.126";
+                if (!staticIP)
                 {
-                    addr = IPAddress.Parse(Console.ReadLine());
+                    ip = Console.ReadLine();
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.WriteLine(e.Message);
+                    Console.ReadLine();
+                }
 
-                }
-                Console.WriteLine("\nConnecting to: " + addr);
-                TcpClient client = new TcpClient(addr.ToString(), 51234);
-
-                try
-                {
-                    Stream s = client.GetStream();
-                    StreamReader sr = new StreamReader(s);
-                    StreamWriter sw = new StreamWriter(s);
-                    sw.AutoFlush = true;
-                    bool stayOpen = true;
-                    while (stayOpen)
-                    {
-                        string readLine = "";
-                        while (readLine != "<end>")
-                        {
-                            readLine = sr.ReadLine();
-                            if (readLine != null && readLine != "<end>")
-                            {
-                                Console.WriteLine(readLine);
-                            }
-
-                            if (readLine == "<quit>")
-                            {
-                                stayOpen = false;
-                            }
-                        }
-                        Console.Write("->");
-                        string message = Console.ReadLine();
-                        sw.WriteLine(message);
-                    }
-                    s.Close();
-                }
-                finally
-                {
-                    client.Close();
-                }
+                Server server;
+                serverManager.get(ip, out server);
+                ServerProcessor processor = new ServerProcessor(server);
+                processor.run();
+                processor.disconnect();
             }
         }
 
-        static void doTextMode()
-        {
-
-        }
-
-        static void doLineMode()
-        {
-
-        }
     }
 }

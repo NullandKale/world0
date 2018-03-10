@@ -74,6 +74,8 @@ namespace world0Server.client
             {
                 case "<line>":
                     sw.WriteLine("Entering Line Graphics Mode.");
+                    sw.WriteLine("<line>");
+                    cInfo.mode = clientMode.lineGraphicsMode;
                     break;
                 default:
                     sw.WriteLine("Text Mode: Server Received " + message + " ");
@@ -87,11 +89,24 @@ namespace world0Server.client
             switch (message)
             {
                 case "<text>":
-                    sw.WriteLine("Entering Line Graphics Mode.");
+                    sw.WriteLine("Entering Text Graphics Mode.");
+                    sw.WriteLine("<text>");
+                    cInfo.mode = clientMode.textMode;
+                    break;
+                case "<noop>":
+                    for(int i = 0; i < cInfo.frameBuffer.Count; i++)
+                    {
+                        sw.WriteLine("<CD00>" + new String(cInfo.frameBuffer[i]));
+                    }
+                    sw.WriteLine("<noop>");
+                    //sw.WriteLine("<GTIN>");
+                    break;
+                case "<GTIN>":
+                    sw.WriteLine("<noop>");
                     break;
                 default:
                     sw.WriteLine("Line Graphics Mode: Server Received " + message);
-                    sw.WriteLine("To Enter Line Graphics Mode Enter: <text>");
+                    sw.WriteLine("To Enter Text Graphics Mode Enter: <text>");
                     break;
             }
         }

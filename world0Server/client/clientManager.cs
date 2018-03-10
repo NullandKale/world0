@@ -38,6 +38,16 @@ namespace world0Server.client
                 if(cInfo.checkPasscode(passcode))
                 {
                     sw.WriteLine("ACESSS GRANTED.");
+
+                    sw.WriteLine("<GXSZ>");
+                    sw.WriteLine("<end>");
+                    string xSize = sr.ReadLine();
+
+                    sw.WriteLine("<GYSZ>");
+                    sw.WriteLine("<end>");
+                    string ySize = sr.ReadLine();
+
+                    cInfo = new clientInfo(userName, passcode, int.Parse(xSize) - 1, int.Parse(ySize) - 1);
                 }
                 else
                 {
@@ -55,7 +65,16 @@ namespace world0Server.client
                 sw.WriteLine("<end>");
 
                 string passcode = getString(sr, sw);
-                cInfo = new clientInfo(userName, passcode);
+
+                sw.WriteLine("<GXSZ>");
+                sw.WriteLine("<end>");
+                string xSize = sr.ReadLine();
+
+                sw.WriteLine("<GYSZ>");
+                sw.WriteLine("<end>");
+                string ySize = sr.ReadLine();
+
+                cInfo = new clientInfo(userName, passcode, int.Parse(xSize), int.Parse(ySize));
                 addClient(cInfo);
                 saveCSV();
                 return cInfo;
@@ -91,7 +110,7 @@ namespace world0Server.client
             {
                 string userName = splits[0];
                 string passcode = splits[1];
-                return new clientInfo(userName, passcode);
+                return new clientInfo(userName, passcode, 10, 10);
             }
             else
             {
