@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace world0Server.utils
 {
-    public class csvReader
+    public class csvReader : IDisposable
     {
         private StreamReader sr;
         public csvReader(string path)
@@ -41,6 +41,7 @@ namespace world0Server.utils
                 }
                 else
                 {
+                    sr.Dispose();
                     sr.Close();
                     return null;
                 }
@@ -50,6 +51,11 @@ namespace world0Server.utils
         public string readLine()
         {
             return sr.ReadLine();
+        }
+
+        public void Dispose()
+        {
+            sr.Dispose();
         }
     }
 }

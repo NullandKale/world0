@@ -13,7 +13,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="client\clientManager.cs" />
     <Compile Include="client\clientInfo.cs" />
+    <Compile Include="client\clientProcessor.cs" />
     <Compile Include="netCode\serveManager.cs" />
     <Compile Include="netCode\serveThread.cs" />
     <Compile Include="Program.cs" />

@@ -20,7 +20,7 @@ namespace world0Server.client
             sw.WriteLine("LOG-IN...");
             sw.WriteLine("_______________________________________________________");
             sw.WriteLine("REMEMBER!!!!!!! ALL PASSCODES ARE NOT PASSWORDS.");
-            sw.WriteLine("ALL PASSCODES ARE NOTE STORED SECURELY");
+            sw.WriteLine("ALL PASSCODES ARE NOT STORED SECURELY");
             sw.WriteLine("DO NOT USE ANY PASSWORD YOU USE AS YOUR PASSCODE!!!!");
             sw.WriteLine("_______________________________________________________");
             sw.WriteLine("Enter username: ");
@@ -39,6 +39,12 @@ namespace world0Server.client
                 {
                     sw.WriteLine("ACESSS GRANTED.");
                 }
+                else
+                {
+                    sw.WriteLine("INVALID PASSWORD DISCONNECTING");
+                    sw.WriteLine("<quit>");
+                    sw.WriteLine("<end>");
+                }
 
                 return cInfo;
             }
@@ -51,6 +57,7 @@ namespace world0Server.client
                 string passcode = getString(sr, sw);
                 cInfo = new clientInfo(userName, passcode);
                 addClient(cInfo);
+                saveCSV();
                 return cInfo;
             }
         }
@@ -70,7 +77,10 @@ namespace world0Server.client
 
         private static void addClient(clientInfo cInfo)
         {
-            clients.Add(cInfo.userName, cInfo);
+            if(!clients.ContainsKey(cInfo.userName))
+            {
+                clients.Add(cInfo.userName, cInfo);
+            }
         }
 
         private static clientInfo diskBuilder(string line)
@@ -113,14 +123,17 @@ namespace world0Server.client
             if (clients == null)
             {
                 clients = new Dictionary<string, clientInfo>();
-                utils.csvReader userList = new utils.csvReader(csvPath);
-                string line = userList.readLine();
-                while (line != null)
+                using (utils.csvReader userList = new utils.csvReader(csvPath))
                 {
-                    clientInfo temp = diskBuilder(line);
-                    if(temp != null)
+                    string line = userList.readLine();
+                    while (line != null)
                     {
-                        addClient(temp);
+                        clientInfo temp = diskBuilder(line);
+                        if (temp != null)
+                        {
+                            addClient(temp);
+                        }
+                        line = userList.readLine();
                     }
                 }
             }

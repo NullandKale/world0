@@ -36,6 +36,9 @@ namespace world0Server.utils
                     {
                         sw.WriteLine(s);
                     }
+                    sw.Flush();
+                    sw.Dispose();
+                    sw.Close();
                     return true;
                 }
             }
