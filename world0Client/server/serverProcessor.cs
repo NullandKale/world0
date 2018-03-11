@@ -11,7 +11,8 @@ namespace world0Client.server
         public Server s;
 
         private bool stayOpen;
-        double FPS = 0;
+        private double FPS = 0;
+        private char lastGTIN = '\n';
 
         public ServerProcessor(Server s)
         {
@@ -59,8 +60,8 @@ namespace world0Client.server
 
                 if(message == "<NULL>")
                 {
-                    Console.Write("->");
-                    message = Console.ReadLine();
+                    //Console.Write("->");
+                    //message = Console.ReadLine();
                 }
 
                 frameTimeAccumulator += utils.time.asMilliseconds() - startTime;
@@ -78,7 +79,7 @@ namespace world0Client.server
         public string doTextMode(List<string> messages)
         {
             string toReturn = "<NULL>";
-
+            bool getIn = false;
             foreach (string message in messages)
             {
                 switch (message)
@@ -88,15 +89,23 @@ namespace world0Client.server
                         break;
                     case "<GXSZ>":
                         toReturn = Console.WindowWidth.ToString();
+                        getIn = false;
                         break;
                     case "<GYSZ>":
                         toReturn = Console.WindowHeight.ToString();
+                        getIn = false;
                         break;
                     default:
                         Console.WriteLine(message);
                         s.dirtyConsole = true;
+                        getIn = true;
                         break;
                 }
+            }
+
+            if(getIn)
+            {
+                toReturn = Console.ReadLine();
             }
 
             return toReturn;
@@ -126,15 +135,7 @@ namespace world0Client.server
                         s.dirtyConsole = true;
                         break;
                     case "<GTIN>":
-                        char temp = spinWait(25);
-                        if(temp != '\0')
-                        {
-                            toReturn = "<GTIN>" + temp;
-                        }
-                        else
-                        {
-                            toReturn = "<noop>";
-                        }
+                        toReturn = "<GTIN>" + spinWait(5);
                         break;
                     case "<noop>":
                         toReturn = "<noop>";
@@ -152,18 +153,29 @@ namespace world0Client.server
 
         private char spinWait(long waitTimeMS)
         {
-            long startTime = System.DateTime.Now.Millisecond;
-
+            long startTime = utils.time.asMilliseconds();
+            
             while(true)
             {
-                if(Console.KeyAvailable)
-                {
-                    return Console.ReadKey().KeyChar;
-                }
-                
-                if(System.DateTime.Now.Millisecond - startTime > waitTimeMS)
+                if(utils.time.asMilliseconds() - startTime > waitTimeMS)
                 {
                     return '\0';
+                }
+                else
+                {
+                    if(Console.KeyAvailable)
+                    {
+                        char temp = Console.ReadKey().KeyChar;
+                        if(temp != lastGTIN)
+                        {
+                            lastGTIN = temp;
+                            return temp;
+                        }
+                        else
+                        {
+                            return '\0';
+                        }
+                    }
                 }
             }
         }
