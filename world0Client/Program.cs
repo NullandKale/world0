@@ -11,15 +11,20 @@ namespace world0Client
         const string version = "world0Client Alpha v 0.0.1";
         static void Main(string[] args)
         {
-            bool staticIP = true;
+            bool staticIP = false;
             while(true)
             {
                 Console.WriteLine(version);
                 Console.Write("Enter Server IP: ");
-                string ip = "192.168.1.126";
+                string ip = "98.246.224.38";
                 if (!staticIP)
                 {
-                    ip = Console.ReadLine();
+                    string temp = Console.ReadLine();
+                    IPAddress tempAddr = null;
+                    if(IPAddress.TryParse(temp, out tempAddr))
+                    {
+                        ip = temp;
+                    }
                 }
                 else
                 {

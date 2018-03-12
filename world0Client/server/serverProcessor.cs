@@ -12,7 +12,6 @@ namespace world0Client.server
 
         private bool stayOpen;
         private double FPS = 0;
-        private char lastGTIN = '\n';
 
         public ServerProcessor(Server s)
         {
@@ -165,16 +164,7 @@ namespace world0Client.server
                 {
                     if(Console.KeyAvailable)
                     {
-                        char temp = Console.ReadKey().KeyChar;
-                        if(temp != lastGTIN)
-                        {
-                            lastGTIN = temp;
-                            return temp;
-                        }
-                        else
-                        {
-                            return '\0';
-                        }
+                        return Console.ReadKey().KeyChar;
                     }
                 }
             }

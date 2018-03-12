@@ -23,9 +23,17 @@ namespace world0Server.client
 
             cInfo = clientManager.userBuilder(sr, sw);
             sw.WriteLine("Login Successful, " + cInfo.userName);
-
-
+            sw.WriteLine("<line>");
+            cInfo.mode = clientMode.lineGraphicsMode;
             sw.WriteLine("<end>");
+        }
+
+        public void destroy()
+        {
+            if(cInfo != null)
+            {
+                cInfo.destroy();
+            }
         }
 
         public void run()
@@ -86,7 +94,6 @@ namespace world0Server.client
 
         private void doLineGraphicsMode(string message)
         {
-            Console.WriteLine(message);
             if(message.Length >= 6)
             {
                 switch (message.Substring(0, 6))
@@ -97,6 +104,7 @@ namespace world0Server.client
                         cInfo.mode = clientMode.textMode;
                         break;
                     case "<noop>":
+                        cInfo.updateFrameBuffer();
                         for (int i = 0; i < cInfo.frameBuffer.Count; i++)
                         {
                             sw.WriteLine("<CD00>" + new String(cInfo.frameBuffer[i]));
@@ -105,12 +113,14 @@ namespace world0Server.client
                         sw.WriteLine("<GTIN>");
                         break;
                     case "<GTIN>":
-                        Console.WriteLine(message);
+                        if (message.Length > 6 && message.ElementAt(6) != '\0')
+                        {
+                            cInfo.enterCommnad(message.ElementAt(6));
+                        }
                         sw.WriteLine("<noop>");
                         break;
                     default:
-                        sw.WriteLine("Line Graphics Mode: Server Received " + message);
-                        sw.WriteLine("To Enter Text Graphics Mode Enter: <text>");
+                        sw.WriteLine("<noop>");
                         break;
                 }
             }

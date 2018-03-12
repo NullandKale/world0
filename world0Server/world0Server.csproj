@@ -51,6 +51,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utils\csvReader.cs" />
     <Compile Include="utils\csvWriter.cs" />
+    <Compile Include="utils\noise.cs" />
+    <Compile Include="utils\time.cs" />
+    <Compile Include="utils\utils.cs" />
+    <Compile Include="utils\vector2.cs" />
+    <Compile Include="world\WorldStorage.cs" />
+    <Compile Include="world\generators\nameGenerator.cs" />
+    <Compile Include="world\generators\worldGenerator.cs" />
+    <Compile Include="world\Tile.cs" />
+    <Compile Include="world\tileEntities\level0\emptyTile.cs" />
+    <Compile Include="world\tileEntities\tileEntity.cs" />
+    <Compile Include="world\worldManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -47,7 +47,7 @@ namespace world0Server.client
                     sw.WriteLine("<end>");
                     string ySize = sr.ReadLine();
 
-                    cInfo = new clientInfo(userName, passcode, int.Parse(xSize) - 1, int.Parse(ySize) - 1);
+                    cInfo = new clientInfo(userName, passcode, int.Parse(xSize) - 2, int.Parse(ySize) - 2);
                 }
                 else
                 {

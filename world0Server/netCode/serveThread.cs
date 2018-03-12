@@ -34,16 +34,21 @@ namespace world0Server.netCode
             {
                 Socket soc = serveManager.tcpListener.AcceptSocket();
                 Console.WriteLine("Connected To: " + soc.RemoteEndPoint);
+                client.clientProcessor clientPro = null;
 
                 try
                 {
                     Stream s = new NetworkStream(soc);
-                    client.clientProcessor clientPro = new client.clientProcessor(s);
+                    clientPro = new client.clientProcessor(s);
                     clientPro.run();
                     s.Close();
                 }
                 catch (Exception e)
                 {
+                    if (clientPro != null)
+                    {
+                        clientPro.destroy();
+                    }
                     Console.WriteLine(e.Message);
                 }
                 Console.WriteLine("Connection Terminated with: " + soc.RemoteEndPoint);
