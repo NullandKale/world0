@@ -56,7 +56,7 @@ namespace world0Server.client
 
                 string message = sr.ReadLine();
 
-                if (message == null || message == "qqq")
+                if (message == null || message == "qqq" || !cInfo.run)
                 {
                     sw.WriteLine("<quit>");
                     sw.WriteLine("<end>");

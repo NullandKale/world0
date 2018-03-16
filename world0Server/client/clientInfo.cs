@@ -14,6 +14,7 @@ namespace world0Server.client
         public string userName;
         public vector2 pcPos;
         public vector2 screenPos;
+        public bool run;
 
         public clientMode mode = clientMode.textMode;
         public List<char[]> frameBuffer;
@@ -31,6 +32,7 @@ namespace world0Server.client
             pcPos = new vector2(10, 10);
             screenPos = new vector2();
             message = "";
+            run = true;
         }
 
         public void destroy()
@@ -156,6 +158,11 @@ namespace world0Server.client
                 {
                     iMode = inputMode.movementMode;
                 }
+            }
+
+            if(command == 'Q')
+            {
+                run = false;
             }
 
             move(pos);

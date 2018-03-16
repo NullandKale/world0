@@ -42,6 +42,7 @@ namespace world0Client.server
                     }
                     if (readLine == "<quit>")
                     {
+                        Console.Clear();
                         stayOpen = false;
                     }
                 }
