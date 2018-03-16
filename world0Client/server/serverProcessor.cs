@@ -11,7 +11,7 @@ namespace world0Client.server
         public Server s;
 
         private bool stayOpen;
-        private double FPS = 0;
+        private double averageLatency = 0;
 
         private Dictionary<int, char[]> screen;
 
@@ -69,7 +69,7 @@ namespace world0Client.server
                 frameTimeAccumulator += utils.time.asMilliseconds() - startTime;
                 frameTimeCounter++;
 
-                FPS = 1d / ((double)frameTimeAccumulator / frameTimeCounter) * 1000d;
+                averageLatency = ((double)frameTimeAccumulator / frameTimeCounter) / 2;
                 s.sw.WriteLine(message);
 
             }
@@ -121,7 +121,8 @@ namespace world0Client.server
                 s.dirtyConsole = false;
             }
             string toReturn = "<NULL>";
-            Console.SetCursorPosition(0, 0);
+
+            List<string> linesToDraw = new List<string>();
 
             for (int i = 0; i < messages.Count; i++)
             {
@@ -131,7 +132,10 @@ namespace world0Client.server
                         s.clientMode = clientMode.textMode;
                         break;
                     case "<CD00>":
-                        Console.WriteLine(messages[i].Substring(7));
+                        if(messages[i].Length > 7)
+                        {
+                            linesToDraw.Add(messages[i].Substring(7));
+                        }
                         break;
                     case "<STLN>":
                         string[] split = messages[i].Substring(7).Split(',');
@@ -153,8 +157,17 @@ namespace world0Client.server
                 }
             }
 
-            Console.SetCursorPosition(0, Console.WindowHeight - 1);
-            Console.Write("FPS: " + String.Format("{0:0.00}", FPS));
+            if(linesToDraw.Count > 0)
+            {
+                Console.SetCursorPosition(0, 0);
+
+                for (int i = 0; i < linesToDraw.Count; i++)
+                {
+                    Console.WriteLine(linesToDraw[i]);
+                }
+
+                Console.Write("AOWL: " + String.Format("{0:0}MS       ", averageLatency));
+            }
 
 
             return toReturn;
@@ -174,7 +187,12 @@ namespace world0Client.server
                 {
                     if(Console.KeyAvailable)
                     {
-                        return Console.ReadKey().KeyChar;
+                        char toReturn = Console.ReadKey().KeyChar;
+                        while(Console.KeyAvailable)
+                        {
+                            Console.ReadKey();
+                        }
+                        return toReturn;
                     }
                 }
             }

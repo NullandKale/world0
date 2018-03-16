@@ -139,10 +139,16 @@ namespace world0Server.client
         private void fullScreenUpdate()
         {
             cInfo.updateFrameBuffer();
+            string toWrite = "";
+
             for (int i = 0; i < cInfo.frameBuffer.Count; i++)
             {
                 Array.Copy(cInfo.frameBuffer[i], remoteBuffer[i], cInfo.frameBuffer[0].Length);
-                sw.WriteLine("<CD00>" + new String(cInfo.frameBuffer[i]));
+                toWrite += new String(cInfo.frameBuffer[i]) + "\n<CD00>";
+            }
+            if(toWrite != "")
+            {
+                sw.WriteLine("<CD00>" + toWrite);
             }
         }
 

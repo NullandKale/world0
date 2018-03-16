@@ -62,6 +62,7 @@
     <Compile Include="world\tileEntities\level0\emptyTile.cs" />
     <Compile Include="world\tileEntities\tileEntity.cs" />
     <Compile Include="world\worldManager.cs" />
+    <Compile Include="world\worldStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

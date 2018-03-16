@@ -82,7 +82,7 @@ namespace world0Server
             toDisplay = "" + (kbs / seconds) + "kb/s Sent " + (kbr / seconds) + "kb/s Received";
         }
 
-        public static world.generators.worldStore getWorld()
+        public static world.worldStore getWorld()
         {
             return worldMan.wStore;
         }
