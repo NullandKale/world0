@@ -13,10 +13,13 @@ namespace world0Client.server
         private bool stayOpen;
         private double FPS = 0;
 
+        private Dictionary<int, char[]> screen;
+
         public ServerProcessor(Server s)
         {
             this.s = s;
             stayOpen = true;
+            screen = new Dictionary<int, char[]>();
         }
 
         public void run()
@@ -130,11 +133,17 @@ namespace world0Client.server
                     case "<CD00>":
                         Console.WriteLine(messages[i].Substring(7));
                         break;
+                    case "<STLN>":
+                        string[] split = messages[i].Substring(7).Split(',');
+                        int lineNum = int.Parse(split[0]);
+                        Console.SetCursorPosition(0, lineNum);
+                        Console.WriteLine(split[1]);
+                        break;
                     case "<CLEA>":
                         s.dirtyConsole = true;
                         break;
                     case "<GTIN>":
-                        toReturn = "<GTIN>" + spinWait(5);
+                        toReturn = "<GTIN>" + spinWait(0);
                         break;
                     case "<noop>":
                         toReturn = "<noop>";
@@ -144,6 +153,7 @@ namespace world0Client.server
                 }
             }
 
+            Console.SetCursorPosition(0, Console.WindowHeight - 1);
             Console.Write("FPS: " + String.Format("{0:0.00}", FPS));
 
 

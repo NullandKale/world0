@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,10 @@ namespace world0Server.client
         private StreamReader sr;
         private StreamWriter sw;
         private clientInfo cInfo;
+
+        private List<char[]> remoteBuffer;
+
+        private bool firstFrame;
 
         public clientProcessor(Stream s)
         {
@@ -26,6 +31,14 @@ namespace world0Server.client
             sw.WriteLine("<line>");
             cInfo.mode = clientMode.lineGraphicsMode;
             sw.WriteLine("<end>");
+
+            remoteBuffer = new List<char[]>();
+            for(int i = 0; i < cInfo.frameBuffer.Count; i++)
+            {
+                remoteBuffer.Add(new char[cInfo.frameBuffer[0].Length]);
+            }
+
+            firstFrame = true;
         }
 
         public void destroy()
@@ -40,6 +53,7 @@ namespace world0Server.client
         {
             while (true)
             {
+
                 string message = sr.ReadLine();
 
                 if (message == null || message == "qqq")
@@ -104,12 +118,8 @@ namespace world0Server.client
                         cInfo.mode = clientMode.textMode;
                         break;
                     case "<noop>":
-                        cInfo.updateFrameBuffer();
-                        for (int i = 0; i < cInfo.frameBuffer.Count; i++)
-                        {
-                            sw.WriteLine("<CD00>" + new String(cInfo.frameBuffer[i]));
-                        }
-                        //sw.WriteLine("<noop>");
+                        //partialScreenUpdate();
+                        fullScreenUpdate();
                         sw.WriteLine("<GTIN>");
                         break;
                     case "<GTIN>":
@@ -122,6 +132,39 @@ namespace world0Server.client
                     default:
                         sw.WriteLine("<noop>");
                         break;
+                }
+            }
+        }
+
+        private void fullScreenUpdate()
+        {
+            cInfo.updateFrameBuffer();
+            for (int i = 0; i < cInfo.frameBuffer.Count; i++)
+            {
+                Array.Copy(cInfo.frameBuffer[i], remoteBuffer[i], cInfo.frameBuffer[0].Length);
+                sw.WriteLine("<CD00>" + new String(cInfo.frameBuffer[i]));
+            }
+        }
+
+
+        //TODO FIX THIS
+        private void partialScreenUpdate()
+        {
+            if(firstFrame)
+            {
+                fullScreenUpdate();
+                firstFrame = false;
+            }
+            else
+            {
+                cInfo.updateFrameBuffer();
+                for (int i = 0; i < cInfo.frameBuffer.Count; i++)
+                {
+                    if (cInfo.frameBuffer[i].SequenceEqual(remoteBuffer[i]))
+                    {
+                        Array.Copy(cInfo.frameBuffer[i], remoteBuffer[i], cInfo.frameBuffer[0].Length);
+                        sw.WriteLine("<STLN> " + i + "," + new String(cInfo.frameBuffer[i]));
+                    }
                 }
             }
         }

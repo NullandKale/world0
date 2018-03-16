@@ -10,11 +10,13 @@ namespace world0Server.world.tileEntities
     {
         public bool isEmpty;
         public char tex;
+        public bool isCollideable;
 
-        public tileEntity(char t)
+        public tileEntity(char t, bool collides)
         {
             isEmpty = true;
             tex = t;
+            isCollideable = collides;
         }
 
         public virtual void update(Tile tile)
@@ -24,7 +26,7 @@ namespace world0Server.world.tileEntities
 
         public static tileEntity duplicate(tileEntity tEntity)
         {
-            return new tileEntity(tEntity.tex);
+            return new tileEntity(tEntity.tex, tEntity.isCollideable);
         }
     }
 }

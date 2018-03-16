@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace world0Server
@@ -24,6 +26,7 @@ namespace world0Server
             while(RUN)
             {
                 display();
+                ShowNetworkTraffic();
             }
 
             stop();
@@ -55,6 +58,28 @@ namespace world0Server
                 Console.WriteLine(toDisplay);
                 Console.SetCursorPosition(x, y);
             }
+        }
+
+        private static void ShowNetworkTraffic()
+        {
+            PerformanceCounterCategory performanceCounterCategory = new PerformanceCounterCategory("Network Interface");
+            string instance = performanceCounterCategory.GetInstanceNames()[0];
+            PerformanceCounter performanceCounterSent = new PerformanceCounter("Network Interface", "Bytes Sent/sec", instance);
+            PerformanceCounter performanceCounterReceived = new PerformanceCounter("Network Interface", "Bytes Received/sec", instance);
+
+            float kbs = 0;
+            float kbr = 0;
+            float seconds = 0;
+
+            for (int i = 0; i < 25; i++)
+            {
+                kbs += (performanceCounterSent.NextValue() / 1024);
+                kbr += (performanceCounterReceived.NextValue() / 1024);
+                seconds += 0.5f;
+                Thread.Sleep(500);
+            }
+
+            toDisplay = "" + (kbs / seconds) + "kb/s Sent " + (kbr / seconds) + "kb/s Received";
         }
 
         public static world.generators.worldStore getWorld()

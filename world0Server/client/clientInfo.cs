@@ -79,6 +79,7 @@ namespace world0Server.client
 
         private void doTextMode(char command)
         {
+            displayName(true);
             if (command == '~')
             {
                 if (iMode == inputMode.movementMode)
@@ -92,7 +93,17 @@ namespace world0Server.client
             }
             else
             {
-                message += command;
+                if(command != '\b')
+                {
+                    message += command;
+                }
+                else
+                {
+                    if(message.Length >= 1)
+                    {
+                        message = message.Substring(0, message.Length - 1);
+                    }
+                }
             }
 
             displayName(false);
@@ -152,10 +163,13 @@ namespace world0Server.client
 
         public void move(vector2 movement)
         {
-            displayName(true);
-            pcPos = movement;
-            screenPos = updateScreenPos();
-            displayName(false);
+            if(!Program.getWorld().getTile(movement).ground.isCollideable)
+            {
+                displayName(true);
+                pcPos = movement;
+                screenPos = updateScreenPos();
+                displayName(false);
+            }
         }
 
         public vector2 updateScreenPos()
@@ -204,7 +218,7 @@ namespace world0Server.client
 
                 for (int i = 0; i < message.Length; i++)
                 {
-                    Tile temp = Program.getWorld().getTile(new vector2(pcPos.x - message.Length / 2 + i, pcPos.y + 1));
+                    Tile temp = Program.getWorld().getTile(new vector2(pcPos.x - message.Length / 2 + i, pcPos.y + 2));
                     if (temp != null)
                     {
                         if (temp.tEntity != null)
@@ -231,7 +245,7 @@ namespace world0Server.client
                     {
                         if(temp.tEntity == null)
                         {
-                            temp.tEntity = new world.tileEntities.tileEntity(userName.ToCharArray()[i]);
+                            temp.tEntity = new world.tileEntities.tileEntity(userName.ToCharArray()[i], false);
                         }
                     }
                     
@@ -245,7 +259,7 @@ namespace world0Server.client
                     {
                         if (temp.tEntity == null)
                         {
-                            temp.tEntity = new world.tileEntities.tileEntity(message.ToCharArray()[i]);
+                            temp.tEntity = new world.tileEntities.tileEntity(message.ToCharArray()[i], false);
                         }
                     }
                 }
@@ -256,7 +270,7 @@ namespace world0Server.client
                 {
                     if (pcLoc.tEntity == null)
                     {
-                        pcLoc.tEntity = new world.tileEntities.tileEntity('@');
+                        pcLoc.tEntity = new world.tileEntities.tileEntity('@', false);
                     }
                 }
             }
