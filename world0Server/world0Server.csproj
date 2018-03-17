@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="client\clientFramebuffer.cs" />
     <Compile Include="client\clientManager.cs" />
     <Compile Include="client\clientInfo.cs" />
     <Compile Include="client\clientProcessor.cs" />

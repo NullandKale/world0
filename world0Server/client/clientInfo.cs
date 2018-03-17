@@ -17,7 +17,7 @@ namespace world0Server.client
         public bool run;
 
         public clientMode mode = clientMode.textMode;
-        public List<char[]> frameBuffer;
+        public clientFramebuffer framebuffer;
 
         private string passcode;
 
@@ -28,7 +28,7 @@ namespace world0Server.client
         {
             this.userName = userName;
             this.passcode = passcode;
-            initFrameBuffer(xSize, ySize);
+            framebuffer = new clientFramebuffer(new vector2(xSize, ySize));
             pcPos = new vector2(10, 10);
             screenPos = new vector2();
             message = "";
@@ -38,30 +38,6 @@ namespace world0Server.client
         public void destroy()
         {
             displayName(true);
-        }
-
-        public void initFrameBuffer(int xSize, int ySize)
-        {
-            frameBuffer = new List<char[]>();
-
-            for (int y = 0; y < ySize; y++)
-            {
-                char[] temp = new char[xSize];
-
-                for (int x = 0; x < xSize; x++)
-                {
-                    if ((x % 2 == 0 && y % 2 == 1) || x % 2 == 1 && y % 2 == 0)
-                    {
-                        temp[x] = 'X';
-                    }
-                    else
-                    {
-                        temp[x] = '-';
-                    }
-                }
-
-                frameBuffer.Add(temp);
-            }
         }
 
         public void enterCommnad(char command)
@@ -174,37 +150,12 @@ namespace world0Server.client
             {
                 displayName(true);
                 pcPos = movement;
-                screenPos = updateScreenPos();
+                framebuffer.updateScreenPos(pcPos);
                 displayName(false);
             }
         }
 
-        public vector2 updateScreenPos()
-        {
-            vector2 newScreenPos = new vector2(pcPos.x - (frameBuffer[0].Length / 2) + 1, pcPos.y - (frameBuffer.Count / 2));
 
-            if (newScreenPos.x < 0)
-            {
-                newScreenPos.x = 0;
-            }
-
-            if (newScreenPos.y < 0)
-            {
-                newScreenPos.y = 0;
-            }
-
-            if (newScreenPos.x + frameBuffer[0].Length + 1 > Program.getWorld().tiles.GetLength(0))
-            {
-                newScreenPos.x = (short)(Program.getWorld().tiles.GetLength(0) - frameBuffer[0].Length);
-            }
-
-            if (newScreenPos.y + frameBuffer.Count + 1 > Program.getWorld().tiles.GetLength(1))
-            {
-                newScreenPos.y = (short)(Program.getWorld().tiles.GetLength(1) - frameBuffer.Count);
-            }
-
-            return newScreenPos;
-        }
 
 
         public void displayName(bool clear)
@@ -213,7 +164,7 @@ namespace world0Server.client
             {
                 for (int i = 0; i < userName.Length; i++)
                 {
-                    Tile temp = Program.getWorld().getTile(new vector2(pcPos.x - userName.Length / 2 + i, pcPos.y + 1));
+                    Tile temp = Program.getWorld().getTile(new vector2(pcPos.x - userName.Length / 2 + i, pcPos.y - 1));
                     if(temp != null)
                     {
                         if (temp.tEntity != null)
@@ -225,7 +176,7 @@ namespace world0Server.client
 
                 for (int i = 0; i < message.Length; i++)
                 {
-                    Tile temp = Program.getWorld().getTile(new vector2(pcPos.x - message.Length / 2 + i, pcPos.y + 2));
+                    Tile temp = Program.getWorld().getTile(new vector2(pcPos.x - message.Length / 2 + i, pcPos.y - 2));
                     if (temp != null)
                     {
                         if (temp.tEntity != null)
@@ -247,7 +198,7 @@ namespace world0Server.client
             {
                 for (int i = 0; i < userName.Length; i++)
                 {
-                    Tile temp = Program.getWorld().getTile(new vector2(pcPos.x - userName.Length / 2 + i, pcPos.y + 1));
+                    Tile temp = Program.getWorld().getTile(new vector2(pcPos.x - userName.Length / 2 + i, pcPos.y - 1));
                     if(temp != null)
                     {
                         if(temp.tEntity == null)
@@ -260,7 +211,7 @@ namespace world0Server.client
 
                 for (int i = 0; i < message.Length; i++)
                 {
-                    Tile temp = Program.getWorld().getTile(new vector2(pcPos.x - message.Length / 2 + i, pcPos.y + 2));
+                    Tile temp = Program.getWorld().getTile(new vector2(pcPos.x - message.Length / 2 + i, pcPos.y - 2));
 
                     if (temp != null)
                     {
@@ -281,11 +232,6 @@ namespace world0Server.client
                     }
                 }
             }
-        }
-
-        public void updateFrameBuffer()
-        {
-            frameBuffer = Program.getWorld().getLines(screenPos, frameBuffer[0].Length, frameBuffer.Count());
         }
 
         public bool checkPasscode(string isPasscode)

@@ -14,10 +14,6 @@ namespace world0Server.client
         private StreamWriter sw;
         private clientInfo cInfo;
 
-        private List<char[]> remoteBuffer;
-
-        private bool firstFrame;
-
         public clientProcessor(Stream s)
         {
             sr = new StreamReader(s);
@@ -31,14 +27,6 @@ namespace world0Server.client
             sw.WriteLine("<line>");
             cInfo.mode = clientMode.lineGraphicsMode;
             sw.WriteLine("<end>");
-
-            remoteBuffer = new List<char[]>();
-            for(int i = 0; i < cInfo.frameBuffer.Count; i++)
-            {
-                remoteBuffer.Add(new char[cInfo.frameBuffer[0].Length]);
-            }
-
-            firstFrame = true;
         }
 
         public void destroy()
@@ -138,39 +126,21 @@ namespace world0Server.client
 
         private void fullScreenUpdate()
         {
-            cInfo.updateFrameBuffer();
-            string toWrite = "";
+            cInfo.framebuffer.update();
 
-            for (int i = 0; i < cInfo.frameBuffer.Count; i++)
+            if(cInfo.framebuffer.dirty)
             {
-                Array.Copy(cInfo.frameBuffer[i], remoteBuffer[i], cInfo.frameBuffer[0].Length);
-                toWrite += new String(cInfo.frameBuffer[i]) + "\n<CD00>";
-            }
-            if(toWrite != "")
-            {
-                sw.WriteLine("<CD00>" + toWrite);
-            }
-        }
+                List<char[]> screen = cInfo.framebuffer.getScreen();
+                string toWrite = "";
 
-
-        //TODO FIX THIS
-        private void partialScreenUpdate()
-        {
-            if(firstFrame)
-            {
-                fullScreenUpdate();
-                firstFrame = false;
-            }
-            else
-            {
-                cInfo.updateFrameBuffer();
-                for (int i = 0; i < cInfo.frameBuffer.Count; i++)
+                for (int i = 0; i < screen.Count; i++)
                 {
-                    if (cInfo.frameBuffer[i].SequenceEqual(remoteBuffer[i]))
-                    {
-                        Array.Copy(cInfo.frameBuffer[i], remoteBuffer[i], cInfo.frameBuffer[0].Length);
-                        sw.WriteLine("<STLN> " + i + "," + new String(cInfo.frameBuffer[i]));
-                    }
+                    toWrite += new String(screen[i]) + "\n<CD00>";
+                }
+
+                if (toWrite != "")
+                {
+                    sw.WriteLine("<CD00>" + toWrite);
                 }
             }
         }
