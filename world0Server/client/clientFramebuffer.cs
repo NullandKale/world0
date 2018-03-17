@@ -76,10 +76,10 @@ namespace world0Server.client
             {
                 for (int x = 0; x < size.x; x++)
                 {
-                    world.Tile tile = world0.getTile(new vector2(x + screenPos.x, y + screenPos.y));
-                    if(tile.getTexel() != framebuffer[y][x])
+                    char tile = world0.getTile(new vector2(x + screenPos.x, y + screenPos.y)).getTexel();
+                    if(tile != framebuffer[y][x])
                     {
-                        framebuffer[y][x] = tile.getTexel();
+                        framebuffer[y][x] = tile;
                         dirty = true;
                     }
                 }
@@ -88,6 +88,8 @@ namespace world0Server.client
 
         public List<char[]> getScreen()
         {
+            dirty = false;
+            
             List<char[]> toReturn = new List<char[]>();
 
             for (int y = 0; y < size.y; y++)

@@ -61,12 +61,6 @@ namespace world0Client.server
                         break;
                 }
 
-                if(message == "<NULL>")
-                {
-                    //Console.Write("->");
-                    //message = Console.ReadLine();
-                }
-
                 frameTimeAccumulator += utils.time.asMilliseconds() - startTime;
                 frameTimeCounter++;
 
@@ -148,7 +142,7 @@ namespace world0Client.server
                         s.dirtyConsole = true;
                         break;
                     case "<GTIN>":
-                        toReturn = "<GTIN>" + spinWait(0);
+                        toReturn = "<GTIN>" + spinWait(1);
                         break;
                     case "<noop>":
                         toReturn = "<noop>";
